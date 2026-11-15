@@ -1,6 +1,7 @@
 # E-Commerce Sales & Customer Performance Analysis
 
 ![Dashboard Preview](dashboard.png)
+*[Note: This is a static preview. The full interactive Power BI dashboard (`.pbix`) is available in this repository for download and exploration.]*
 
 # Project Overview
 For this project, I analyzed two years of e-commerce transaction data (covering December 1, 2009 through December 9, 2011) to get a clearer picture of overall revenue trends, order sizes, customer concentration, and where sales were coming from globally. Using SQL, Python, and Power BI, I cleaned up the raw transactional logs and built an executive dashboard tracking $19.29M in net revenue.
