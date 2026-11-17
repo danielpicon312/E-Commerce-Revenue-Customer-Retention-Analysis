@@ -4,7 +4,7 @@
 [Note: This is a static preview. The full interactive Power BI dashboard (`.pbix`) is available in this repository for download and exploration.]
 
 # Project Overview
-For this project, I analyzed two years of e-commerce transaction data (covering December 1, 2009 through December 9, 2011) to get a clearer picture of overall revenue trends, order sizes, customer concentration, and where sales were coming from globally. Using SQL, Python, and Power BI, I cleaned up the raw transactional logs and built an executive dashboard tracking $19.29M in net revenue.
+For this project, I analyzed two years of e-commerce transaction data (covering December 1, 2009 through December 9, 2011) to get a clearer picture of overall revenue trends, order sizes, customer concentration, and where sales were coming from globally. Using SQLite3, pandas, Python, and Power BI, I cleaned up the raw transactional logs and built an executive dashboard tracking 28 CADM in net revenue.
 
 # Key Findings
 Looking at the numbers, total net revenue came out to $19.29M over the two-year period. One of the most interesting takeaways was comparing the average transaction value ($359.65) to the median transaction value ($196.35). That gap shows the data is heavily right-skewed—while most everyday orders are relatively modest, a smaller number of massive wholesale or bulk orders pull the average way up.
