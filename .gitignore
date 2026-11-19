@@ -1,0 +1,18 @@
+# Raw data and generated databases
+*.csv
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# OS and editor temporary files
+.DS_Store
+Thumbs.db
+.vscode/
