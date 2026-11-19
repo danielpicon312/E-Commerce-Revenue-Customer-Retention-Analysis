@@ -1,69 +1,63 @@
 # Online Retail II Sales & Customer Dashboard
 
-This project cleans and analyzes transactional retail data from the Online Retail II dataset (`12/1/2009 – 12/9/2011`). A Python and SQLite pipeline processes the raw CSV into a local database, which feeds a Power BI dashboard built to track net revenue, order values, seasonality, and top accounts.
+End-to-end sales and customer analytics project built on the Online Retail II dataset (`12/1/2009 – 12/9/2011`). Raw invoice data is processed through a Python and SQLite ETL pipeline into a normalized `invoices` table and connected to a Power BI report covering revenue trends, order values, seasonality, product performance, and top customers.
 
 ![Dashboard Preview](dashboard.png)
 
-## Overview & Key Numbers
+## Key Metrics & Findings
 
-* **Net Revenue:** £18.85M, calculated as $\text{Net Revenue} = \sum(\text{Quantity} \times \text{Price})$ across all records, including negative quantities from returns and cancellations.
-* **Average Order Value (AOV):** £510.91
-* **Median Order Value (MOV):** £302.22
-* **Seasonality:** Order volume and revenue both peak in November before dropping off in December. Note that the seasonal order count chart combines monthly observations across all available years in the dataset.
-* **Geography:** The UK accounts for most of the revenue, followed by Ireland, the Netherlands, Germany, and France.
+* **Net Revenue (£18.85M):** Computed across all rows as $\text{Net Revenue} = \sum(\text{Quantity} \times \text{Price})$. Negative quantities from returns and cancellations remain included so reported revenue reflects realized net sales rather than gross volume.
+* **Order Value Skew (AOV £510.91 vs. MOV £302.22):** Average Order Value sits well above Median Order Value, indicating that high-value bulk or wholesale invoices pull the mean upward while a typical order sits closer to £302.
+* **Seasonal Peaks:** Order counts and revenue build into November—reflecting combined monthly order activity across all available years in the dataset—before tapering in December.
+* **Geographic Concentration:** Sales are heavily weighted toward the UK, followed by secondary markets such as Ireland, the Netherlands, Germany, and France.
+* **Guest vs. Registered Customers:** Orders with missing `Customer ID` values stay included in overall revenue, order counts, and order-value metrics, but are filtered out of the Top 10 Customers visual so anonymous transactions are not misattributed to registered accounts.
 
-## Tools Used
+## Stack
 
-* Python (`pandas`, `sqlite3`, `pathlib`)
-* SQLite
-* Power BI & DAX
+* **ETL & Storage:** Python (`pandas`, `sqlite3`, `pathlib`), SQLite
+* **BI & Modeling:** Power BI, DAX
 
-## Repository Structure
+## Repository Layout
 
 ```text
 OnlineRetailIIUCI/
-│
 ├── README.md
+├── .gitignore
+├── .gitattributes
 ├── onlineretailanalysis.py
 ├── OnlineRetailAnalysis.pbix
-├── dashboard.png
-├── online_retail.db
-└── online_retail_II.csv
+└── dashboard.png
 ```
 
-## Data Cleaning & Setup (`onlineretailanalysis.py`)
+## ETL Pipeline (`onlineretailanalysis.py`)
 
-The Python script reads `online_retail_II.csv` and builds `online_retail.db`:
+1. Reads `online_retail_II.csv` from the project directory, trims column header whitespace, and removes duplicate rows.
+2. Casts `Customer ID` to pandas nullable `Int64` (stripping `.0` decimals while preserving missing values), then converts it to `TEXT` in SQLite.
+3. Builds the `invoices` table via SQL with `SELECT DISTINCT` and standardizes country labels (`EIRE` $\rightarrow$ `Ireland`, `RSA` $\rightarrow$ `South Africa`, `Unspecified` $\rightarrow$ `Unknown`).
+4. Drops `raw_invoices`, commits changes, and runs `VACUUM` to reclaim disk space in `online_retail.db`.
 
-1. Strips extra whitespace from column names and drops duplicate rows.
-2. Casts `Customer ID` to nullable integers (`Int64`) so trailing `.0` decimals are removed without breaking null rows, then converts them to `TEXT` in SQLite.
-3. Standardizes inconsistent country names in SQL (`EIRE` to `Ireland`, `RSA` to `South Africa`, `Unspecified` to `Unknown`).
-4. Deduplicates records into a clean `invoices` table, drops the staging table, and runs `VACUUM` to keep the database compact.
+## Power BI & DAX Design
 
-## Power BI & DAX Notes
+* **Invoice-Level Aggregations:** `Average Order Value` and `Median Order Value` evaluate over `VALUES(invoices[Invoice])` (`AVERAGEX` / `MEDIANX`) so orders with multiple line items are not double-counted as separate orders.
+* **Missing Customer Handling:** Blank `Customer ID` records are preserved in the model so total revenue and order counts stay accurate while Top 10 customer rankings remain restricted to identified customers.
+* **Date & Currency Formatting:** Monetary metrics are formatted in GBP (`£`), and `InvoiceDate` uses the `Date` type to drive the date-range slicer and monthly trend visuals.
 
-* **Invoice-level AOV & MOV:** Instead of averaging line items, `AOV` and `MOV` use `AVERAGEX` and `MEDIANX` over `VALUES(invoices[Invoice])` so every invoice is weighted once.
-* **Null Customer IDs:** Rows without a `Customer ID` (unregistered/guest orders) are kept in all revenue, order count, AOV, and MOV calculations, but excluded from the Top 10 Customers chart so they don't distort individual customer rankings.
-* **Formatting:** All currency values are formatted in GBP (`£`), and `InvoiceDate` is typed as `Date` for the date range slicer and monthly trend analysis.
+## Report Structure
 
-## Dashboard Layout
+* **KPI Cards:** Net Revenue, Average Order Value, and Median Order Value.
+* **Filters & Country Breakdown:** Country slicer, `InvoiceDate` range slider, and a country revenue summary table.
+* **Trends & Seasonality:** Monthly revenue over time alongside combined multi-year monthly order counts.
+* **Products & Customers:** Horizontal bar visuals for product revenue by `StockCode` and Top 10 Customers (excluding missing IDs).
 
-* **Top Row:** Headline KPI cards for Net Revenue, Average Order Value, and Median Order Value.
-* **Left Panel:** Multi-select Country slicer, Invoice Date slider, and a summary table of revenue by country.
-* **Middle Row:** Monthly revenue trend over time alongside a seasonal order count chart combined across all years.
-* **Bottom Row:** Horizontal bar charts ranking product revenue by `StockCode` and the Top 10 registered customers.
+## Local Setup
 
-## Running Locally
-
-1. Ensure `online_retail_II.csv` is in the same directory as `onlineretailanalysis.py`.
-2. Install `pandas` if not already installed:
+1. Place `online_retail_II.csv` in the same folder as `onlineretailanalysis.py`.
+2. Install required Python packages (such as `pandas`):
    ```bash
    pip install pandas
    ```
-3. Run the script to generate `online_retail.db`:
+3. Run the ETL script to generate `online_retail.db`:
    ```bash
    python onlineretailanalysis.py
    ```
-4. Open `OnlineRetailAnalysis.pbix` in Power BI Desktop.
-5. If prompted, configure the SQLite ODBC connection (or update your local ODBC DSN/connection string) to point to `online_retail.db`.
-6. Refresh the report to load the latest data.
+4. Open `OnlineRetailAnalysis.pbix` in Power BI Desktop, point the SQLite ODBC connection (DSN or connection string) to your local `online_retail.db` if prompted, and refresh the data.
