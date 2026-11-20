@@ -6,7 +6,7 @@ An end-to-end data analytics project using **Python**, **SQLite**, and **Power B
 
 ## Key Metrics & Findings
 
-* **Net Revenue (36 CADM):** Computed across all rows as $\text{Net Revenue} = \sum (\text{Quantity} \times \text{Price})$. Negative quantities from returns and cancellations remain included so reported revenue reflects realized net sales rather than gross volume.
+* **Net Revenue (£18.86M):** Computed across all rows as $\text{Net Revenue} = \sum (\text{Quantity} \times \text{Price})$. Negative quantities from returns and cancellations remain included so reported revenue reflects realized net sales rather than gross volume.
 * **Order Value Skew (AOV £510.92 vs. MOV £302.22):** Average Order Value sits well above Median Order Value, indicating that high-value bulk or wholesale invoices pull the mean upward while a typical order sits closer to £302.
 * **Seasonal Peaks:** Order counts and revenue build steadily through autumn and peak in **November**, reflecting combined monthly order activity across all available years in the dataset—before tapering in December.
 * **Geographic Concentration:** Sales are heavily weighted toward the United Kingdom, followed by secondary European and international markets such as Ireland, the Netherlands, Germany, and France.
