@@ -26,7 +26,7 @@ cursor = conn.cursor()
 # Load raw data file to SQLite
 df.to_sql('raw_invoices', conn, if_exists='replace', index=False)
 
-# Creating Replacement Table, Typecasting Customer ID to Strings and Correcting Country labels
+# Creating Replacement Table, Typecasting Customer ID to Strings, Leading and Trailing Spaces in Description Column and Correcting Country labels
 print("Applying SQL transformations...", flush=True)
 cursor.execute("DROP TABLE IF EXISTS invoices")
 cursor.execute("""
@@ -35,6 +35,7 @@ cursor.execute("""
         Invoice,
         InvoiceDate,
         StockCode,
+        TRIM(Description) AS Description,
         Quantity,
         Price,
         CAST([Customer ID] AS TEXT) AS [Customer ID],
