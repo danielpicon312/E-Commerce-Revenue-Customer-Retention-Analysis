@@ -8,7 +8,7 @@ An end-to-end data analytics project using **Python**, **SQLite**, and **Power B
 
 * **Net Revenue (£18.86M):** Computed across all rows as `Net Revenue = Σ(Quantity × Price)`. Negative quantities from returns and cancellations remain included so reported revenue reflects realized net sales rather than gross volume. Non-product rows in the source data (postage, fees, and manual or accounting adjustments) are also included in this total.
 * **Order Value Skew (AOV £510.92 vs. MOV £302.22):** Average Order Value sits well above Median Order Value, indicating that high-value bulk or wholesale invoices pull the mean upward while a typical order sits closer to £302. Both figures are calculated over all invoices, including cancellation invoices with negative totals.
-* **Seasonal Peaks:** Order counts and Net Revenue build steadily through autumn and peak in **November** before tapering in December. December 2011 reflects partial data through December 9.
+* **Seasonal Peaks:** Order counts and Net Revenue build steadily through autumn and peak in **November** before tapering in December. Comparing 24 full months, November averages the most orders of any month, while December falls back to roughly spring levels.
 * **Geographic Concentration:** Sales are heavily weighted toward the United Kingdom, followed by secondary European and international markets such as Ireland, the Netherlands, Germany, and France.
 * **Guest vs. Registered Customers:** Orders with missing `Customer ID` values remain included in overall Net Revenue, order counts, and order-value metrics, but are excluded from the **Top 10 Customers** visual so anonymous transactions are not misattributed to registered accounts.
 
@@ -29,7 +29,7 @@ The dataset is licensed under [CC BY 4.0](https://creativecommons.org/licenses/b
 
 ## Data Notes & Limitations
 
-* **Monthly order counts combine years.** The dataset covers December 2009 – December 2011, so the **Order Count by Month** chart includes three Decembers (one partial) but only two of every other month. December's bar is therefore not directly comparable to the other months.
+* **Monthly order counts use 24 full months.** The **Order Count by Month** chart is filtered to December 2009 – November 2011, so every calendar month appears exactly twice and the bars are directly comparable. The partial December 2011 (through December 9) is excluded from this chart only; all other visuals use the full dataset.
 * **Net Revenue includes non-product rows.** Postage, fees, and manual or accounting adjustments are part of the £18.86M total. They are excluded only from the **Product Revenue** chart.
 * **Order-value metrics include cancellations.** Cancellation invoices carry negative totals and are included in Average and Median Order Value, which pulls both figures slightly down.
 
@@ -61,6 +61,7 @@ E-Commerce-Revenue-Customer-Retention-Analysis/
 
 * **Invoice-Level Aggregations:** Average Order Value and Median Order Value evaluate over `VALUES(invoices[Invoice])` (`AVERAGEX` / `MEDIANX`) so orders with multiple line items are not double-counted as separate orders.
 * **Product-Level Filtering:** Non-merchandise accounting and shipping items (such as `DOTCOM POSTAGE` and `POSTAGE`) are excluded at the visual level in the **Product Revenue** chart so top-product rankings highlight physical goods while keeping shipping fees intact in overall Net Revenue.
+* **Seasonality Comparison Window:** A visual-level filter limits **Order Count by Month** to `InvoiceDate` on or after 1 December 2009 and before 1 December 2011. Without it, December would combine three years (one partial) against two for every other month. The upper bound uses *before 1 December* rather than *on or before 30 November* because `InvoiceDate` includes a time, so the latter would drop orders placed during 30 November.
 * **Missing Customer Handling:** Blank `Customer ID` records are preserved in the model so total Net Revenue and order counts stay accurate while Top 10 customer rankings remain restricted to identified customers.
 * **Scale & Formatting:** Monetary metrics are formatted in GBP (`£`), `InvoiceDate` uses the `Date` type to drive the date-range slicer and monthly trend visuals, and the Net Revenue trend Y-axis is anchored at `£0.0M` to prevent visual distortion across filter selections.
 
@@ -68,7 +69,7 @@ E-Commerce-Revenue-Customer-Retention-Analysis/
 
 * **KPI Cards:** Net Revenue, Average Order Value, and Median Order Value.
 * **Filters & Country Breakdown:** Country slicer, `InvoiceDate` range slider, and a country Net Revenue summary table.
-* **Trends & Seasonality:** Monthly Net Revenue over time alongside combined multi-year monthly order counts.
+* **Trends & Seasonality:** Monthly Net Revenue over time alongside order counts by calendar month across 24 full months (December 2009 – November 2011).
 * **Products & Customers:** Horizontal bar visuals for **Product Revenue** by cleaned `Description` (excluding postage and non-product fees) and **Top 10 Customers** (excluding guest checkouts).
 
 ## Local Setup
