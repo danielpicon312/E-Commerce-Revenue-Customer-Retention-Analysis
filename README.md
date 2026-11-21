@@ -6,11 +6,32 @@ An end-to-end data analytics project using **Python**, **SQLite**, and **Power B
 
 ## Key Metrics & Findings
 
-* **Net Revenue (£18.86M):** Computed across all rows as $\text{Net Revenue} = \sum (\text{Quantity} \times \text{Price})\$. Negative quantities from returns and cancellations remain included so reported revenue reflects realized net sales rather than gross volume.
-* **Order Value Skew (AOV £510.92 vs. MOV £302.22):** Average Order Value sits well above Median Order Value, indicating that high-value bulk or wholesale invoices pull the mean upward while a typical order sits closer to £302.
-* **Seasonal Peaks:** Order counts and Net Revenue build steadily through autumn and peak in **November**—reflecting combined monthly order activity across all available years in the dataset—before tapering in December (with December 2011 reflecting partial data through December 9).
+* **Net Revenue (£18.86M):** Computed across all rows as `Net Revenue = Σ(Quantity × Price)`. Negative quantities from returns and cancellations remain included so reported revenue reflects realized net sales rather than gross volume. Non-product rows in the source data (postage, fees, and manual or accounting adjustments) are also included in this total.
+* **Order Value Skew (AOV £510.92 vs. MOV £302.22):** Average Order Value sits well above Median Order Value, indicating that high-value bulk or wholesale invoices pull the mean upward while a typical order sits closer to £302. Both figures are calculated over all invoices, including cancellation invoices with negative totals.
+* **Seasonal Peaks:** Order counts and Net Revenue build steadily through autumn and peak in **November** before tapering in December. December 2011 reflects partial data through December 9.
 * **Geographic Concentration:** Sales are heavily weighted toward the United Kingdom, followed by secondary European and international markets such as Ireland, the Netherlands, Germany, and France.
 * **Guest vs. Registered Customers:** Orders with missing `Customer ID` values remain included in overall Net Revenue, order counts, and order-value metrics, but are excluded from the **Top 10 Customers** visual so anonymous transactions are not misattributed to registered accounts.
+
+## Business Recommendations
+
+* **Plan inventory and marketing around the autumn ramp.** Demand climbs from September and peaks in November, so stock for top sellers and seasonal lines should be secured, and campaigns launched, before the ramp begins rather than during it.
+* **Treat high-value buyers as a distinct segment.** The gap between average and median order value points to a group of bulk or wholesale customers. Tailored pricing, volume discounts, or account management could protect and grow this revenue.
+* **Prioritize retention of top customers.** Revenue drops off steeply after the first few registered customers, and the top two each generated over £0.5M, so losing any one of them would be noticeable. These accounts are worth monitoring for drops in order frequency.
+* **Test growth in secondary markets.** Revenue is concentrated in the UK. Ireland, the Netherlands, Germany, and France already generate meaningful sales and are natural candidates for targeted expansion.
+
+## Data Source
+
+This project uses the **Online Retail II** dataset from the UCI Machine Learning Repository: <https://archive.ics.uci.edu/dataset/502/online+retail+ii>
+
+> Chen, D. (2012). Online Retail II [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5CG6D
+
+The dataset is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). UCI distributes it as an Excel workbook (`online_retail_II.xlsx`) with one sheet per year; combine both sheets and save them as `online_retail_II.csv` before running the ETL script. The raw data and the generated database are not committed to this repository.
+
+## Data Notes & Limitations
+
+* **Monthly order counts combine years.** The dataset covers December 2009 – December 2011, so the **Order Count by Month** chart includes three Decembers (one partial) but only two of every other month. December's bar is therefore not directly comparable to the other months.
+* **Net Revenue includes non-product rows.** Postage, fees, and manual or accounting adjustments are part of the £18.86M total. They are excluded only from the **Product Revenue** chart.
+* **Order-value metrics include cancellations.** Cancellation invoices carry negative totals and are included in Average and Median Order Value, which pulls both figures slightly down.
 
 ## Tech Stack
 
@@ -20,7 +41,7 @@ An end-to-end data analytics project using **Python**, **SQLite**, and **Power B
 ## Repository Layout
 
 ```text
-OnlineRetailIIUCI/
+E-Commerce-Revenue-Customer-Retention-Analysis/
 ├── README.md
 ├── .gitignore
 ├── .gitattributes
@@ -52,7 +73,7 @@ OnlineRetailIIUCI/
 
 ## Local Setup
 
-1. Place `online_retail_II.csv` in the same folder as `onlineretailanalysis.py`.
+1. Download the dataset (see [Data Source](#data-source)) and place `online_retail_II.csv` in the same folder as `onlineretailanalysis.py`.
 2. Install required Python packages:
    ```bash
    pip install pandas
